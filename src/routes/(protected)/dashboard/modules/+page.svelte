@@ -291,22 +291,21 @@
                   <AlertDialog.Root open={$dialogStore.get(module.id)}>
                     <AlertDialog.Trigger
                       class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
-                      >Delete</AlertDialog.Trigger
+                      >Options</AlertDialog.Trigger
                     >
                     <AlertDialog.Content>
                       <AlertDialog.Header>
-                        <AlertDialog.Title>Disable</AlertDialog.Title>
+                        <AlertDialog.Title
+                          >Review the class performance</AlertDialog.Title
+                        >
                         <AlertDialog.Description>
-                          Are you sure you want to delete this module?
+                          continue to the next page to complete the review
+                          process.
                         </AlertDialog.Description>
                       </AlertDialog.Header>
                       <AlertDialog.Footer>
                         <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <AlertDialog.Action
-                          on:click={(event) =>
-                            handleDeleteClick(event, module.id)}
-                          >Continue</AlertDialog.Action
-                        >
+                        <AlertDialog.Action>Continue</AlertDialog.Action>
                       </AlertDialog.Footer>
                     </AlertDialog.Content>
                   </AlertDialog.Root>
