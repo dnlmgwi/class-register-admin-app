@@ -236,7 +236,7 @@
   }
 
   async function handleDisable(id: string) {
-    const response = await fetch(`${baseUrl}/api/v1/benefit/disable`, {
+    const response = await fetch(`${baseUrl}/api/v1/user/deactivate`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
