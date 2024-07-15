@@ -142,88 +142,87 @@
   </div> -->
     <div class="overflow-auto">
       <div class="relative w-full h-screen">
-        {#if data.users.length == 0}<div
+        <!-- {#if data.users.length === 0}<div
             class="flex items-center justify-center"
           >
             No Users Found
           </div>
-        {:else}
-          <table class="w-full caption-bottom text-sm">
-            <thead class="[&amp;_tr]:border-b"
-              ><tr
+        {:else} -->
+        <table class="w-full caption-bottom text-sm">
+          <thead class="[&amp;_tr]:border-b"
+            ><tr
+              class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+              ><th
+                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                >ID</th
+              ><th
+                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                >Role</th
+              ><th
+                class="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 text-right"
+                >Actions</th
+              ></tr
+            ></thead
+          ><tbody class="[&amp;_tr:last-child]:border-0">
+            {#each data.users as user}
+              <tr
                 class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                ><th
-                  class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
-                  >ID</th
-                ><th
-                  class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
-                  >Role</th
-                ><th
-                  class="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 text-right"
-                  >Actions</th
-                ></tr
-              ></thead
-            ><tbody class="[&amp;_tr:last-child]:border-0">
-              {#each data.users as user}
-                <tr
-                  class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                  ><td
-                    class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium"
-                    >{user.id}</td
-                  ><td
-                    class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0"
-                    ><div
-                      class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      data-v0-t="badge"
-                    >
-                      {user.role}
-                    </div></td
-                  ><td
-                    class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right"
-                    ><div class="flex items-center justify-end gap-2">
-                      <!-- <button
+                ><td
+                  class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium"
+                  >{user.id}</td
+                ><td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0"
+                  ><div
+                    class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    data-v0-t="badge"
+                  >
+                    {user.role}
+                  </div></td
+                ><td
+                  class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right"
+                  ><div class="flex items-center justify-end gap-2">
+                    <!-- <button
                     on:click={(event) => handleViewClick(event, user.id)}
                     class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
                     >View</button
                   > -->
-                      <AlertDialog.Root open={$dialogStore.get(user.id)}>
-                        <AlertDialog.Trigger
-                          class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
-                          >Enable</AlertDialog.Trigger
-                        >
-                        <AlertDialog.Content>
-                          <AlertDialog.Header>
-                            <AlertDialog.Title>Enable</AlertDialog.Title>
-                            <AlertDialog.Description>
-                              Are you sure you want to enable this account?
-                            </AlertDialog.Description>
-                          </AlertDialog.Header>
-                          <AlertDialog.Footer>
-                            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                            <AlertDialog.Action
-                              on:click={(event) =>
-                                handleActiveClick(event, user.id)}
-                              >Continue</AlertDialog.Action
-                            >
-                          </AlertDialog.Footer>
-                        </AlertDialog.Content>
-                      </AlertDialog.Root>
-                      <!-- <button
+                    <AlertDialog.Root open={$dialogStore.get(user.id)}>
+                      <AlertDialog.Trigger
+                        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                        >Enable</AlertDialog.Trigger
+                      >
+                      <AlertDialog.Content>
+                        <AlertDialog.Header>
+                          <AlertDialog.Title>Enable</AlertDialog.Title>
+                          <AlertDialog.Description>
+                            Are you sure you want to enable this account?
+                          </AlertDialog.Description>
+                        </AlertDialog.Header>
+                        <AlertDialog.Footer>
+                          <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                          <AlertDialog.Action
+                            on:click={(event) =>
+                              handleActiveClick(event, user.id)}
+                            >Continue</AlertDialog.Action
+                          >
+                        </AlertDialog.Footer>
+                      </AlertDialog.Content>
+                    </AlertDialog.Root>
+                    <!-- <button
                     on:click={(event) => handleDisableClick(event, user.id)}
                     class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
                     >Disable</button
                   > -->
-                      <!-- <button
+                    <!-- <button
                     class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
                     color="red">Edit</button
                   > -->
-                    </div></td
-                  ></tr
-                >
-              {/each}
-            </tbody>
-          </table>
-        {/if}
+                  </div></td
+                ></tr
+              >
+            {/each}
+          </tbody>
+        </table>
+        <!-- {/if} -->
         <div class="flex items-end justify-end w-full pt-3">
           <div class="flex items-center gap-2">
             <button
