@@ -299,13 +299,13 @@
                           >Review the class performance</AlertDialog.Title
                         >
                         <AlertDialog.Description>
-                          continue to the next page to complete the review
-                          process.
+                          download stats in your preferred format.
                         </AlertDialog.Description>
                       </AlertDialog.Header>
                       <AlertDialog.Footer>
                         <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <AlertDialog.Action>Continue</AlertDialog.Action>
+                        <AlertDialog.Action>Download CSV</AlertDialog.Action>
+                        <AlertDialog.Action>Download PDF</AlertDialog.Action>
                       </AlertDialog.Footer>
                     </AlertDialog.Content>
                   </AlertDialog.Root>
