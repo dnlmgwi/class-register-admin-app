@@ -10,15 +10,24 @@
   import { Button, buttonVariants } from "$lib/components/ui/button/index.js";
   import { toast } from "svelte-sonner";
   import { debounce } from "throttle-debounce";
+  import * as Dialog from "$lib/components/ui/dialog/index.js";
+  import Label from "$lib/components/ui/label/label.svelte";
+  import { Input } from "$lib/components/ui/input/index.js";
 
   export let data;
 
   const dialogOpen = writable(false);
 
+  const approveDialogOpen = writable(false);
+
   let total = data.meta.total;
   let currentPage = 1;
 
   let selectedModule: string;
+
+  let selectedDuration: string;
+
+  let durations = [10, 30, 45];
 
   const dialogStore = createDialogStore();
 
@@ -125,6 +134,52 @@
   }
 </script>
 
+<div class="flex justify-end">
+  <form>
+    <Dialog.Root bind:open={$approveDialogOpen}>
+      <div class="flex p-4 justify-end">
+        <Dialog.Trigger class={buttonVariants({ variant: "default" })}>
+          Auto Approve
+        </Dialog.Trigger>
+      </div>
+      <Dialog.Content class="sm:max-w-[425px]">
+        <Dialog.Header>
+          <Dialog.Title>Auto Approve Timer</Dialog.Title>
+          <Dialog.Description
+            >Check-ins will be approved automatically for the set duration.</Dialog.Description
+          >
+        </Dialog.Header>
+
+        <div class="grid gap-4 py-4">
+          <div class="grid grid-cols-4 items-center gap-4">
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild let:builder>
+                <Button variant="outline" class="px-2" builders={[builder]}
+                  >Duration</Button
+                >
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content class="w-56">
+                <DropdownMenu.Label>Duration</DropdownMenu.Label>
+                <DropdownMenu.Separator />
+                <DropdownMenu.RadioGroup bind:value={selectedDuration}>
+                  {#each durations as duration}
+                    <DropdownMenu.RadioItem value={duration}
+                      >{duration} min</DropdownMenu.RadioItem
+                    >
+                  {/each}
+                </DropdownMenu.RadioGroup>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </div>
+        </div>
+        <Dialog.Footer>
+          <Button on:click={async (event) => {}}>Start Timer</Button>
+        </Dialog.Footer>
+        <!-- <SuperDebug data={$form} /> -->
+      </Dialog.Content>
+    </Dialog.Root>
+  </form>
+</div>
 <main class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
   <div class="overflow-auto">
     <div class="relative w-full overflow-auto h-screen">
