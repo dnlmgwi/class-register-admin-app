@@ -14,6 +14,24 @@
         <h3
           class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight"
         >
+          Welcome Back,
+        </h3>
+        <p class="text-sm text-muted-foreground">
+          The total number of students in class.
+        </p>
+      </div>
+      <div class="p-6">
+        <div class="text-4xl font-bold">{data.stats.totalUsers}</div>
+      </div>
+    </div>
+    <div
+      class="rounded-lg border bg-card text-card-foreground shadow-sm"
+      data-v0-t="card"
+    >
+      <div class="flex flex-col space-y-1.5 p-6">
+        <h3
+          class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight"
+        >
           Attendance
         </h3>
         <p class="text-sm text-muted-foreground">
@@ -32,28 +50,10 @@
         <h3
           class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight"
         >
-          Absent
+          Check-Ins
         </h3>
         <p class="text-sm text-muted-foreground">
-          The total number of absent students.
-        </p>
-      </div>
-      <div class="p-6">
-        <div class="text-4xl font-bold">{data.stats.totalBeneficiaries}</div>
-      </div>
-    </div>
-    <div
-      class="rounded-lg border bg-card text-card-foreground shadow-sm"
-      data-v0-t="card"
-    >
-      <div class="flex flex-col space-y-1.5 p-6">
-        <h3
-          class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight"
-        >
-          Late
-        </h3>
-        <p class="text-sm text-muted-foreground">
-          The total number late students.
+          The total number pending check-Ins.
         </p>
       </div>
       <div class="p-6">
