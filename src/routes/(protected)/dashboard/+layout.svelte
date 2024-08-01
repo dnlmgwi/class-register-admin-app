@@ -74,7 +74,7 @@
 </script>
 
 <Resizable.PaneGroup direction="horizontal" class="rounded-lg border w-full ">
-  <Resizable.Pane defaultSize={25}>
+  <Resizable.Pane defaultSize={15}>
     <div class="flex h-[60px] items-center border-b px-6">
       <a class="flex items-center gap-2 font-semibold" href="/" rel="ugc">
         <svg
@@ -153,7 +153,7 @@
           Devices
         </a>
 
-        <a
+        <!-- <a
           class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900"
           href="/dashboard/insights"
           rel="ugc"
@@ -161,7 +161,7 @@
         >
           <i class="iconoir-suggestion scale-125"></i>
           Insights
-        </a>
+        </a> -->
         <a
           class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900"
           href="/dashboard/modules"
@@ -195,7 +195,7 @@
     </div>
   </Resizable.Pane>
   <Resizable.Handle withHandle />
-  <Resizable.Pane defaultSize={75}>
+  <Resizable.Pane defaultSize={85}>
     <div class="flex h-[60px] items-center gap-4 border-b px-6">
       <!-- <a class="lg:hidden" href="/" rel="ugc">
         <svg
