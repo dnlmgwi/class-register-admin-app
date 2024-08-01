@@ -71,7 +71,7 @@
           Avg. Entry Time
         </h3>
         <p class="text-sm text-muted-foreground">
-          Avg. time student enter in class.
+          Avg. time student enter into class.
         </p>
       </div>
       <div class="p-6">
