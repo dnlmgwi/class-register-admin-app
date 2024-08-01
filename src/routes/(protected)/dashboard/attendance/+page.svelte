@@ -27,7 +27,7 @@
 
   let selectedDuration: string;
 
-  let durations = [10, 30, 45];
+  let durations = ["10", "30", "45"];
 
   const dialogStore = createDialogStore();
 
