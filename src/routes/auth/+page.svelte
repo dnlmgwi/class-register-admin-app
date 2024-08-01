@@ -4,7 +4,7 @@
   import { baseUrl } from "$lib/utils/constants";
   import { toast } from "svelte-sonner";
   import { invalidateAll } from "$app/navigation";
-
+  import logo from "$lib/assets/images/coat_of_arms_of_malawi.webp";
   // export let data;
 
   let phone = "";
@@ -41,10 +41,11 @@
 
 <div class="flex items-center justify-center min-h-screen bg-gray-50">
   <form method="POST" action="?/login" class="w-full max-w-md">
-    <div class="mx-auto max-w-md space-y-6">
+    <div class="mx-auto max-w-md space-y-6 justify-items-center">
+      <img alt="logo" src={logo} class="w-20 mx-auto" />
       <div class="space-y-2 text-center">
         <h1 class="text-3xl font-bold">Login</h1>
-        <p class="text-gray-500"></p>
+        <p class="text-gray-500">Welcome Back</p>
       </div>
       <div class="space-y-4">
         <div class="space-y-2">
