@@ -93,26 +93,26 @@
 
   let selectedRole: SelectUserRole = SelectUserRole.Student;
 
-  $: if (selectedRole) {
-    updateUrlAndFetch();
-  }
+  // $: if (selectedRole) {
+  //   updateUrlAndFetch();
+  // }
 
-  const updateUrlAndFetch = () => {
-    url.searchParams.set("role", selectedRole);
-    goto(`${$currentPath}${url.search}`, {
-      replaceState: true,
-    }).then(() => {
-      // Invalidate all benefit caches
-      invalidateCache();
+  // const updateUrlAndFetch = async () => {
+  //   url.searchParams.set("role", selectedRole);
+  //   await goto(`${$currentPath}${url.search}`, {
+  //     replaceState: true,
+  //   }).then(() => {
+  //     // Invalidate all benefit caches
+  //     invalidateCache();
 
-      // Reload the current page to fetch fresh data
-      // goto($page.url.pathname + $page.url.search, { invalidateAll: true });
-    });
-  };
+  //     // Reload the current page to fetch fresh data
+  //     // goto($page.url.pathname + $page.url.search, { invalidateAll: true });
+  //   });
+  // };
 
-  onMount(() => {
-    url.searchParams.set("role", selectedRole);
-  });
+  // onMount(() => {
+  //   // url.searchParams.set("role", selectedRole);
+  // });
 
   const roles = Object.values(SelectUserRole);
 
@@ -186,7 +186,7 @@
   const debounceCreateUserFunc = debounce(
     5000,
     async (createStudent: StudentDTO) => {
-      await handleCreate(createStudent);
+      await handleSignUpStudent(createStudent);
     },
     { atBegin: true }
   );
@@ -203,8 +203,8 @@
     }
   }
 
-  async function handleCreate(createStudent: StudentDTO) {
-    const response = await fetch(`${baseUrl}/api/v1/auth/student/create`, {
+  async function handleSignUpStudent(createStudent: StudentDTO) {
+    const response = await fetch(`${baseUrl}/api/v1/auth/student/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -321,15 +321,14 @@
         <Dialog.Root bind:open={$createDialogOpen}>
           <div class="flex p-4 justify-end">
             <Dialog.Trigger class={buttonVariants({ variant: "default" })}>
-              Add User
+              Add Student
             </Dialog.Trigger>
           </div>
           <Dialog.Content class="sm:max-w-[425px]">
             <Dialog.Header>
-              <Dialog.Title>Adding User</Dialog.Title>
+              <Dialog.Title>Adding Student</Dialog.Title>
               <Dialog.Description>
-                Benefits must be made available once created. Click save when
-                you're done.
+                Add a new student to the class register.
               </Dialog.Description>
             </Dialog.Header>
 
@@ -347,7 +346,7 @@
                 />
               </div>
               <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="lastName" class="text-right">lastName</Label>
+                <Label for="lastName" class="text-right">Last Name</Label>
                 <Input
                   id="lastName"
                   bind:value={$createForm.lastName}
@@ -356,37 +355,53 @@
                   {...$createFormConstraints.lastName}
                 />
               </div>
-              <!-- <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="type" class="text-right">Type</Label>
-                <div class="col-span-3">
-                  {#each roles as role}
-                    <div>
-                      <input
-                        type="radio"
-                        id={`type-${role}`}
-                        name="type"
-                        value={role}
-                        bind:group={$createForm.role}
-                      />
-                      <label for={`type-${role}`}>{role}</label>
-                    </div>
-                  {/each}
-                </div>
-              </div> -->
+              <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="studentId" class="text-right">Student ID</Label>
+                <Input
+                  id="studentId"
+                  bind:value={$createForm.studentId}
+                  class="col-span-3"
+                  aria-invalid={$createFormErrors.studentId
+                    ? "true"
+                    : undefined}
+                  {...$createFormConstraints.studentId}
+                />
+              </div>
+              <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="email" class="text-right">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  bind:value={$createForm.email}
+                  class="col-span-3"
+                  aria-invalid={$createFormErrors.email ? "true" : undefined}
+                  {...$createFormConstraints.email}
+                />
+              </div>
+              <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="phone" class="text-right">Phone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  bind:value={$createForm.phone}
+                  class="col-span-3"
+                  aria-invalid={$createFormErrors.phone ? "true" : undefined}
+                  {...$createFormConstraints.phone}
+                />
+              </div>
             </div>
             <Dialog.Footer>
               <Button
                 on:click={async (event) =>
                   await handleCreateClick(event, $createForm)}
               >
-                Create Benefit
+                Create Student
               </Button>
             </Dialog.Footer>
-            <!-- <SuperDebug data={$form} /> -->
           </Dialog.Content>
         </Dialog.Root>
       </form>
-      <DropdownMenu.Root>
+      <!-- <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild let:builder>
           <Button variant="outline" builders={[builder]}>Select Role</Button>
         </DropdownMenu.Trigger>
@@ -401,7 +416,7 @@
             {/each}
           </DropdownMenu.RadioGroup>
         </DropdownMenu.Content>
-      </DropdownMenu.Root>
+      </DropdownMenu.Root> -->
       <div class="flex items-center gap-2"></div>
     </div>
     <div class="overflow-hidden">
