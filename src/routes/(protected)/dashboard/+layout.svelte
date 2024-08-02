@@ -227,11 +227,11 @@
               <span>Profile</span>
               <DropdownMenu.Shortcut>⇧⌘P</DropdownMenu.Shortcut>
             </DropdownMenu.Item>
-            <DropdownMenu.Item>
+            <!-- <DropdownMenu.Item>
               <CreditCard class="mr-2 h-4 w-4" />
               <span>Billing</span>
               <DropdownMenu.Shortcut>⌘B</DropdownMenu.Shortcut>
-            </DropdownMenu.Item>
+            </DropdownMenu.Item> -->
             <DropdownMenu.Item>
               <Settings class="mr-2 h-4 w-4" />
               <span>Settings</span>
