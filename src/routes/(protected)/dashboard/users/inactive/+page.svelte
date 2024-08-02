@@ -154,7 +154,7 @@
               class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
               ><th
                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
-                >ID</th
+                >Student ID</th
               ><th
                 class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
                 >Role</th
@@ -169,7 +169,7 @@
                 class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                 ><td
                   class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium"
-                  >{user.id}</td
+                  >{user.profile.studentId}</td
                 ><td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0"
                   ><div
                     class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
