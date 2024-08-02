@@ -12,7 +12,7 @@ import { createStudentSchema } from "$lib/domain/validators/User/createStudentVa
 export const load: PageLoad = async ({ fetch, parent, url }) => {
   let page = url.searchParams.get("page");
   let limit = url.searchParams.get("limit");
-  let role = url.searchParams.get("role");
+  let role = url.searchParams.get("role") ?? "student";
   const { jwt, user } = await parent();
 
   const { pathname } = url;
