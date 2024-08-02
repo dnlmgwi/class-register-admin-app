@@ -59,12 +59,17 @@
           "Content-Type": "application/json",
           Authorization: `Bearer ${data.jwt}`,
         },
-        body: JSON.stringify({ id, moduleId }),
+        body: JSON.stringify([{ id, moduleId }]),
       });
 
       if (response.ok) {
         const { data } = await response.json();
-        toast(data);
+
+        if (Array.isArray(data)) {
+          data.map(async (element) => {
+            toast(element);
+          });
+        }
 
         // Invalidate caches
         invalidateCache();
