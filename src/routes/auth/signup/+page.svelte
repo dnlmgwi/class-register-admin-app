@@ -27,70 +27,11 @@
     validators: zod(createStudentSchema),
   });
 
-  async function handleSignup(event: Event) {
-    event.preventDefault();
-
-    const response = await fetch(`${baseUrl}/api/v1/auth/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify($form),
-    });
-
-    if (response.ok) {
-      const { data } = await response.json();
-      toast(data);
-      goto("/auth");
-    } else {
-      const { error } = await response.json();
-      toast.error(error);
-    }
-  }
-
-  const debounceCreateUserFunc = debounce(
-    5000,
-    async (createStudent: StudentDTO) => {
-      await handleSignUpStudent(createStudent);
-    },
-    { atBegin: true }
-  );
-
-  async function handleCreateClick(event: Event) {
-    event.preventDefault();
-    const result = await validateStudentForm();
-
-    if (result.valid) {
-      debounceCreateUserFunc($studentForm);
-    } else {
-      toast.error("Incomplete Form");
-    }
-  }
-
-  async function handleSignUpStudent(createStudent: StudentDTO) {
-    const response = await fetch(`${baseUrl}/api/v1/auth/student/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${data.jwt}`,
-      },
-      body: JSON.stringify({ ...createStudent }),
-    });
-
-    if (response.ok) {
-      const { data } = await response.json();
-      toast(data);
-      goto("/auth");
-    } else {
-      const { error } = await response.json();
-      toast.error(error);
-    }
-  }
 </script>
 
 <div class="flex items-center justify-center min-h-screen bg-gray-50">
   {#if isStudent}
-    <form on:submit|preventDefault={handleCreateClick} class="w-full max-w-md">
+    <form method="POST" action="?/signup" class="w-full max-w-md">
       <div class="mx-auto max-w-md space-y-6">
         <div class="space-y-2 text-center">
           <h1 class="text-3xl font-bold">Sign Up as {$form.role}</h1>
@@ -139,7 +80,7 @@
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="phone"
               type="tel"
-              placeholder="265880000000"
+              placeholder="265XXXXXXXXX"
               bind:value={$studentForm.phone}
               {...$studentConstraints.phone}
             />
@@ -211,7 +152,7 @@
       </div>
     </form>
   {:else}
-    <form on:submit|preventDefault={handleSignup} class="w-full max-w-md">
+    <form method="POST" action="?/signup" class="w-full max-w-md">
       <div class="mx-auto max-w-md space-y-6">
         <div class="space-y-2 text-center">
           <h1 class="text-3xl font-bold">Sign Up as {$form.role}</h1>
@@ -225,6 +166,7 @@
             <select
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="role"
+              name="role"
               bind:value={$form.role}
               {...$constraints.role}
             >
@@ -244,6 +186,7 @@
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="phone"
               type="tel"
+              name="phone"
               placeholder="265880000000"
               bind:value={$form.phone}
               {...$constraints.phone}
@@ -260,6 +203,7 @@
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="firstName"
               type="text"
+              name="firstName"
               placeholder="John"
               bind:value={$form.firstName}
               {...$constraints.firstName}
@@ -276,6 +220,7 @@
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="lastName"
               type="text"
+              name="lastName"
               placeholder="Doe"
               bind:value={$form.lastName}
               {...$constraints.lastName}
@@ -292,6 +237,7 @@
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               id="email"
               type="email"
+              name="email"
               placeholder="john.doe@example.com"
               bind:value={$form.email}
               {...$constraints.email}

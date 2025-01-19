@@ -1,67 +1,137 @@
-import { redirect, type Handle } from "@sveltejs/kit";
-import type { User } from "./types";
-import { baseUrl } from "$lib/utils/constants";
-import { jwtDecode } from "jwt-decode";
-import { tokenExpired } from "$lib/stores/tokenStore";
+// hooks.server.ts
+import { redirect, type Handle } from '@sveltejs/kit';
+import type { User } from './types';
+import { baseUrl, nodeEnv } from '$lib/utils/constants';
+import { jwtDecode } from 'jwt-decode';
 
-export const handle: Handle = async ({ event, resolve }) => {
-  const jwt = event.cookies.get("jwt");
+// Define protected routes and their required roles
+const PROTECTED_ROUTES = {
+  '/dashboard': ['lecturer', 'admin', 'student'],
+};
 
-  // try {
-  if (jwt) {
-    // Decode the JWT to get the expiration time
-    const decodedToken: { exp: number } = jwtDecode(jwt);
-    const currentTime = Math.floor(Date.now() / 1000);
-    const expirationThreshold = 5 * 60; // 5 minutes in seconds
+// Define public routes that should be accessible without auth
+const PUBLIC_ROUTES = ['/auth', '/auth/signup'];
 
-    if (decodedToken.exp < currentTime + expirationThreshold) {
-      event.cookies.set("jwt", "", { path: "/", maxAge: -1 }); // Clear the cookie
-      event.locals.jwt = null;
-      event.locals.user = null;
-      // tokenExpired.set(true); // Update the store
-    } else {
-      try {
-        const res = await fetch(`${baseUrl}/api/v1/user/me`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
-        });
+async function getUserProfile(jwt: string): Promise<User | null> {
+  try {
+    const res = await fetch(`${baseUrl}/api/v1/user/me`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-        if (res.ok) {
-          const { data } = await res.json();
-          event.locals.user = data as User;
-        } else {
-          event.locals.user = null;
-          event.cookies.set("jwt", "", { path: "/", maxAge: -1 }); // Clear the cookie
-          throw redirect(302, "/auth");
-        }
-      } catch (fetchError) {
-        // Handle fetch error (e.g., ECONNREFUSED)
-        event.locals.user = null;
-        event.cookies.set("jwt", "", { path: "/", maxAge: -1 }); // Clear the cookie
-        throw redirect(302, "/auth");
-      }
-    }
-    //   } else {
-    //     event.locals.user = null;
-    //   }
-    //   } catch (err) {
-    //     event.locals.user = null;
-    //     event.cookies.set("jwt", "", { path: "/", maxAge: -1 }); // Clear the cookie in case of error
-    //     throw redirect(302, "/auth");
+    if (!res.ok) return null;
+    const { data } = await res.json();
+    return data as User;
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return null;
+  }
+}
+
+function isTokenExpired(decodedToken: { exp: number }): boolean {
+  const currentTime = Math.floor(Date.now() / 1000);
+  const expirationThreshold = 5 * 60; // 5 minutes buffer
+  return decodedToken.exp < currentTime + expirationThreshold;
+}
+
+function clearAuthState(event: any) {
+  event.locals.user = null;
+  event.locals.jwt = null;
+  event.cookies.set('jwt', '', {
+    path: '/',
+    maxAge: -1,
+    httpOnly: true,
+    secure: nodeEnv === 'production',
+    sameSite: 'strict'
+  });
+}
+
+function checkRouteAccess(pathname: string, userRole?: string): boolean {
+  // Always allow access to public routes
+  if (PUBLIC_ROUTES.some(route => pathname.startsWith(route))) {
+    return true;
   }
 
-  const protectedRoutes = ["/dashboard"]; // Add more protected routes as needed
-
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    event.url.pathname.startsWith(route)
+  // Check if the current path is protected
+  const protectedRoute = Object.entries(PROTECTED_ROUTES).find(([route]) =>
+      pathname.startsWith(route)
   );
 
-  if (!jwt && isProtectedRoute) {
-    return redirect(302, "/auth");
+  if (!protectedRoute) return true; // Not a protected route
+  if (!userRole) return false; // No role for protected route
+
+  const [, allowedRoles] = protectedRoute;
+  return allowedRoles.includes(userRole);
+}
+
+export const handle: Handle = async ({ event, resolve }) => {
+  const jwt = event.cookies.get('jwt');
+  const isPublicRoute = PUBLIC_ROUTES.some(route =>
+      event.url.pathname.startsWith(route)
+  );
+
+  // If accessing auth page with valid JWT, redirect to dashboard
+  if (isPublicRoute && jwt) {
+    try {
+      const decodedToken = jwtDecode<{ exp: number; role: string }>(jwt);
+      if (!isTokenExpired(decodedToken)) {
+        const user = await getUserProfile(jwt);
+        if (user) {
+          throw redirect(302, '/dashboard');
+        }
+      }
+    } catch (error) {
+      if (error instanceof redirect) throw error;
+      clearAuthState(event);
+    }
   }
 
-  return resolve(event);
+  if (jwt) {
+    try {
+      const decodedToken = jwtDecode<{ exp: number; role: string }>(jwt);
+
+      if (isTokenExpired(decodedToken)) {
+        clearAuthState(event);
+        if (!isPublicRoute) {
+          throw redirect(302, '/auth');
+        }
+      } else {
+        const user = await getUserProfile(jwt);
+        if (user) {
+          event.locals.user = user;
+          event.locals.jwt = jwt;
+
+          // Check if user has access to the current route
+          if (!checkRouteAccess(event.url.pathname, user.role)) {
+            throw redirect(302, '/unauthorized');
+          }
+        } else {
+          clearAuthState(event);
+          throw redirect(302, '/auth');
+        }
+      }
+    } catch (error) {
+      clearAuthState(event);
+      if (error instanceof redirect) throw error;
+      throw redirect(302, '/auth');
+    }
+  }
+
+  // Check if trying to access protected route without authentication
+  if (!jwt && !isPublicRoute && !checkRouteAccess(event.url.pathname)) {
+    throw redirect(302, '/auth');
+  }
+
+  // Add cache control headers for protected routes
+  const response = await resolve(event);
+  if (!isPublicRoute) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+  }
+
+  return response;
 };

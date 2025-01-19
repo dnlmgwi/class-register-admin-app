@@ -15,6 +15,7 @@
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@tailwindcss/typography": "^0.5.13",
     "@types/mapbox-gl": "^3.1.0",
+    "libphonenumber-js": "^1.11.4",
     "@types/throttle-debounce": "^5.0.2",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
@@ -48,5 +49,6 @@
     "tailwind-variants": "^0.2.1",
     "throttle-debounce": "^5.0.0",
     "timeago.js": "^4.0.2"
-  }
+  },
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }

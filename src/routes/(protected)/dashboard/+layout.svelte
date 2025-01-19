@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+  import { enhance } from '$app/forms';
   import { derived } from "svelte/store";
   import { baseUrl } from "$lib/utils/constants";
   import * as Resizable from "$lib/components/ui/resizable";
@@ -21,6 +22,8 @@
   import logo from "$lib/assets/images/coat_of_arms_of_malawi.webp";
   import { Button } from "$lib/components/ui/button/index.js";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+  import {browser} from "$app/environment";
+  import type {SubmitFunction} from "@sveltejs/kit";
   export const currentPath = derived(page, ($page) => $page.url.pathname);
 
   export const pageTitle = derived(currentPath, ($currentPath) => {
@@ -46,22 +49,17 @@
 
   export let data;
 
-  async function handleLogout() {
-    const response = await fetch(`${baseUrl}/api/v1/auth/logout`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${data.jwt}`,
-        "Content-Type": "application/json",
-      },
-      // credentials: "include",
-    });
-
-    if (response.ok) {
-      await goto("/auth");
-    } else {
-      alert("Logout failed");
-    }
-  }
+  const handleLogout: SubmitFunction = () => {
+    return async ({ result }) => {
+      if (result.type === 'success') {
+        if (browser) {
+          window.history.pushState(null, '', '/auth');
+          window.history.replaceState(null, '', '/auth');
+          await goto('/auth', { replaceState: true });
+        }
+      }
+    };
+  };
 
   function handleLogoutClick(event: MouseEvent) {
     event.preventDefault();
@@ -240,14 +238,20 @@
           </DropdownMenu.Group>
           <DropdownMenu.Separator />
           <DropdownMenu.Item>
-            <button
-              on:click={(event) => handleLogoutClick(event)}
-              class="flex items-center gap-3 rounded-lg transition-all hover:text-gray-900"
+            <form
+                    method="POST"
+                    action="?/logout"
+                    use:enhance={handleLogout}
             >
-              <LogOut class="mr-2 h-4 w-4" />
-              <span>Log out</span>
-              <DropdownMenu.Shortcut>⇧⌘Q</DropdownMenu.Shortcut>
-            </button>
+              <button
+                      type="submit"
+                      class="flex w-full items-center gap-3 rounded-lg transition-all hover:text-gray-900"
+              >
+                <LogOut class="mr-2 h-4 w-4" />
+                <span>Log out</span>
+                <DropdownMenu.Shortcut>⇧⌘Q</DropdownMenu.Shortcut>
+              </button>
+            </form>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>

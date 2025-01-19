@@ -1,8 +1,16 @@
 import { z } from "zod";
-import { SelectUserRole } from "../../../utils/enums/UserRole";
+import { SelectUserRole } from "$lib/utils/enums/UserRole";
+import {validationService} from "$lib/dependencies";
+
+export const phoneSchema = z.string().refine(
+    (phone) => validationService.validatePhoneNumber(phone,"MW"),
+    {
+      message: 'Invalid phone number format. Please use format: 265XXXXXXXXX for Malawi numbers'
+    }
+);
 
 export const createUserSchema = z.object({
-  phone: z.string().min(1, { message: "Phone is required" }),
+  phone: phoneSchema,
   role: z.nativeEnum(SelectUserRole, {
     errorMap: () => {
       return {

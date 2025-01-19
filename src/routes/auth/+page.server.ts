@@ -40,7 +40,8 @@ export const actions: Actions = {
         path: "/",
       });
 
-      throw redirect(302, "/dashboard");
+      return { success: true };
+
     } else {
       const { error } = await response.json();
       return { error: error };

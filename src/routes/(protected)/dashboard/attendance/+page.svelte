@@ -188,7 +188,7 @@
 <main class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
   <div class="overflow-auto">
     <div class="relative w-full overflow-auto h-screen">
-      {#if data.attendance.length == 0}<div
+      {#if data.attendance.length === 0}<div
           class="flex items-center justify-center h-dvh"
         >
           No Check-Ins Found
