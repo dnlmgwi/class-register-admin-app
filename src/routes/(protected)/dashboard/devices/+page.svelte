@@ -24,6 +24,9 @@
 
     const {form, errors, constraints, validateForm} = superForm(data.form, {
         validators: zod(createDeviceSchema),
+        onResult: (data) => {
+            tokenDialogOpen.set(true);
+        }
     });
 
     const url = $page.url;
