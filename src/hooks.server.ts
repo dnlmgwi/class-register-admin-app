@@ -1,4 +1,3 @@
-// hooks.server.ts
 import { redirect, type Handle } from '@sveltejs/kit';
 import type { User } from './types';
 import { baseUrl, nodeEnv } from '$lib/utils/constants';
@@ -10,7 +9,7 @@ const PROTECTED_ROUTES = {
 };
 
 // Define public routes that should be accessible without auth
-const PUBLIC_ROUTES = ['/auth', '/auth/signup'];
+const PUBLIC_ROUTES = ['/auth/signup', '/auth/login'];
 
 async function getUserProfile(jwt: string): Promise<User | null> {
   try {
@@ -96,7 +95,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       if (isTokenExpired(decodedToken)) {
         clearAuthState(event);
         if (!isPublicRoute) {
-          throw redirect(302, '/auth');
+          throw redirect(302, '/auth/login');
         }
       } else {
         const user = await getUserProfile(jwt);
@@ -110,19 +109,19 @@ export const handle: Handle = async ({ event, resolve }) => {
           }
         } else {
           clearAuthState(event);
-          throw redirect(302, '/auth');
+          throw redirect(302, '/auth/login');
         }
       }
     } catch (error) {
       clearAuthState(event);
       if (error instanceof redirect) throw error;
-      throw redirect(302, '/auth');
+      throw redirect(302, '/auth/login');
     }
   }
 
   // Check if trying to access protected route without authentication
   if (!jwt && !isPublicRoute && !checkRouteAccess(event.url.pathname)) {
-    throw redirect(302, '/auth');
+    throw redirect(302, '/auth/login');
   }
 
   // Add cache control headers for protected routes
