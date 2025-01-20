@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {SelectUserRole} from "$lib/utils/enums/UserRole";
 
 export const createStudentSchema = z.object({
   phone: z.string().min(1, { message: "Phone is required" }),
@@ -12,4 +13,13 @@ export const createStudentSchema = z.object({
       "https://csqaiejkcporxddqwans.supabase.co/storage/v1/object/public/uploads/218a145f-63ad-41ca-a32a-4ebceb6bdbd6/GHSTBUoW8AAoAHo.jpeg"
     ),
   studentId: z.string().min(1, { message: "Student ID is required" }),
+  role: z.nativeEnum(SelectUserRole, {
+    errorMap: () => {
+      return {
+        message: `Role must be one of: ${Object.values(SelectUserRole).join(
+            ", "
+        )}`,
+      };
+    },
+  }).default(SelectUserRole.Student),
 });
