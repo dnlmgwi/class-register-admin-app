@@ -379,14 +379,14 @@
                 />
               </div>
               <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="phone" class="text-right">Phone</Label>
+                <Label for="email" class="text-right">Phone</Label>
                 <Input
-                  id="phone"
+                  id="email"
                   type="tel"
-                  bind:value={$createForm.phone}
+                  bind:value={$createForm.email}
                   class="col-span-3"
-                  aria-invalid={$createFormErrors.phone ? "true" : undefined}
-                  {...$createFormConstraints.phone}
+                  aria-invalid={$createFormErrors.email ? "true" : undefined}
+                  {...$createFormConstraints.email}
                 />
               </div>
             </div>
