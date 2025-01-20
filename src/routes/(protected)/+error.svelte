@@ -12,7 +12,7 @@
 
   async function handleRoute() {
     if (!$tokenExpired) {
-      goto("/auth");
+      goto("/auth/login");
     } else {
       history.back();
     }
