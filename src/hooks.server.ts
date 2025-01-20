@@ -79,7 +79,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       if (!isTokenExpired(decodedToken)) {
         const user = await getUserProfile(jwt);
         if (user) {
-          throw redirect(302, '/dashboard');
+          return redirect(302, '/dashboard');
         }
       }
     } catch (error) {
@@ -95,7 +95,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       if (isTokenExpired(decodedToken)) {
         clearAuthState(event);
         if (!isPublicRoute) {
-          throw redirect(302, '/auth/login');
+          return redirect(302, '/auth/login');
         }
       } else {
         const user = await getUserProfile(jwt);
@@ -105,11 +105,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 
           // Check if user has access to the current route
           if (!checkRouteAccess(event.url.pathname, user.role)) {
-            throw redirect(302, '/unauthorized');
+            return redirect(302, '/unauthorized');
           }
         } else {
           clearAuthState(event);
-          throw redirect(302, '/auth/login');
+          return redirect(302, '/auth/login');
         }
       }
     } catch (error) {
