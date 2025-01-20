@@ -20,34 +20,9 @@
     showTokenExpiredDialog = value;
   });
 
-  async function handleLogout() {
-    const response = await fetch(`${baseUrl}/api/v1/auth/logout`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${data.jwt}`,
-        "Content-Type": "application/json",
-      },
-      // credentials: "include",
-    });
-
-    if (response.ok) {
-      await goto("/auth");
-    } else {
-      alert("Logout failed");
-    }
-  }
-
-  function handleLogoutClick(event: CustomEvent) {
-    event.preventDefault();
-    handleLogout().catch((error) => {
-      alert(error);
-    });
-  }
-
   function closeDialog(event: CustomEvent) {
     showInactiveDialog = false;
     inactiveSession.set(false); // Reset the store
-    handleLogoutClick(event);
   }
 
   function resetTimer() {
@@ -125,6 +100,6 @@
     </div>
   </div>
   <script>
-    window.location.href = "/auth";
+    window.location.href = "/auth/login";
   </script>
 {/if}
