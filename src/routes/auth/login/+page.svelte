@@ -1,21 +1,22 @@
 <script lang="ts">
-    import { superForm } from "sveltekit-superforms";
-    import { zod } from "sveltekit-superforms/adapters";
-    import { toast } from "svelte-sonner";
-    import { loginUserSchema } from "$lib/domain/validators/User/loginUserValidator";
-    import { goto } from "$app/navigation";
-    import { EyeIcon, EyeOffIcon } from "lucide-svelte";
-    import { Button } from "$lib/components/ui/button";
+    import {superForm} from "sveltekit-superforms";
+    import {zod} from "sveltekit-superforms/adapters";
+    import {toast} from "svelte-sonner";
+    import {loginUserSchema} from "$lib/domain/validators/User/loginUserValidator";
+    import {goto} from "$app/navigation";
+    import {EyeIcon, EyeOffIcon} from "lucide-svelte";
+    import {Button} from "$lib/components/ui/button";
+    import logo from "$lib/assets/pexels-pixabay-289737.jpg";
 
-    let { data } = $props();
+    let {data} = $props();
 
     // Password visibility state
     let showPassword = $state(false);
 
     // Form handling
-    const { form, errors, enhance, message } = superForm(data.form, {
+    const {form, errors, enhance, message} = superForm(data.form, {
         validators: zod(loginUserSchema),
-        onResult: ({ result }) => {
+        onResult: ({result}) => {
             if (result.type === 'failure') {
                 toast.error(result.data?.message || 'Login failed');
             }
@@ -27,21 +28,24 @@
 </script>
 
 <div class="min-h-screen w-full bg-gray-100 h-full flex items-center justify-center p-4">
-    <div class="bg-white overflow-hidden w-full h-lvh flex flex-col lg:flex-row">
+    <div class="bg-white overflow-hidden w-full h-lvh flex flex-col lg:flex-row p-12 rounded-3xl">
         <!-- Left side - Illustration -->
-        <div class="lg:w-1/2 bg-[#FCFCFD] p-12 lg:p-16 flex flex-col justify-center items-center relative">
-            <div class="w-full max-w-md">
-                <div class="aspect-square relative">
-                    <!-- Replace this div with your actual illustration -->
-                    <div class="absolute inset-0 flex items-center justify-center">
+        <div class="lg:w-1/2 hidden lg:flex p-12 lg:p-16 flex-col justify-center items-center relative rounded-3xl">
+            <!-- Dark Overlay -->
+            <div class="w-full absolute inset-0 bg-black/20 rounded-3xl"></div>
 
+            <!-- Content -->
+            <div class="w-full max-w-md relative z-10">
+                <div class="aspect-square relative">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <!-- Your content here -->
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Right side - Login form -->
-        <div class="lg:w-1/2 p-12 lg:p-16 flex flex-col justify-center">
+        <div class="h-screen w-full lg:w-1/2 p-6 lg:p-16 flex flex-col justify-center">
             <div class="w-full max-w-md mx-auto">
                 <!-- Header -->
                 <div class="text-center mb-8">
@@ -51,30 +55,24 @@
 
                 <!-- Form -->
                 <form method="POST" action="?/login" class="space-y-6" use:enhance>
-                    {#if $message}
-                        <div class="text-red-500 text-sm mb-4">
-                            {$message}
-                        </div>
-                    {/if}
-
                     <div class="space-y-4">
                         <!-- Phone input -->
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
                                 Phone Number
                             </label>
                             <input
-                                    id="phone"
-                                    name="phone"
+                                    id="email"
+                                    name="email"
                                     type="tel"
                                     required
                                     class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-white"
                                     placeholder="265XXXXXXXXX"
-                                    bind:value={$form.phone}
-                                    aria-invalid={$errors.phone ? 'true' : undefined}
+                                    bind:value={$form.email}
+                                    aria-invalid={$errors.email ? 'true' : undefined}
                             />
-                            {#if $errors.phone}
-                                <p class="text-sm text-red-500 mt-1">{$errors.phone}</p>
+                            {#if $errors.email}
+                                <p class="text-sm text-red-500 mt-1">{$errors.email}</p>
                             {/if}
                         </div>
 
@@ -100,9 +98,9 @@
                                         aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {#if showPassword}
-                                        <EyeOffIcon size={20} />
+                                        <EyeOffIcon size={20}/>
                                     {:else}
-                                        <EyeIcon size={20} />
+                                        <EyeIcon size={20}/>
                                     {/if}
                                 </button>
                             </div>
