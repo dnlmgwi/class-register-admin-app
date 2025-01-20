@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { createStudentSchema } from "$lib/domain/validators/User/createStudentValidator.js";
   import { createUserSchema } from "$lib/domain/validators/User/createUserValidator.js";
   import type { StudentDTO } from "$lib/domain/valueObjects/StudentDTO.js";
@@ -9,14 +8,17 @@
   import { superForm } from "sveltekit-superforms";
   import { zod } from "sveltekit-superforms/adapters";
   import { debounce } from "throttle-debounce";
+  import type { PageProps } from './$types';
 
-  export let data;
+  let { data }: PageProps = $props();
 
-  $: isStudent = $form.role === "student";
+
 
   const { form, errors, constraints, validateForm } = superForm(data.form, {
     validators: zod(createUserSchema),
   });
+
+  let isStudent = $derived($form.role === SelectUserRole.Student);
 
   const {
     form: studentForm,
@@ -31,7 +33,7 @@
 
 <div class="flex items-center justify-center min-h-screen bg-gray-50">
   {#if isStudent}
-    <form method="POST" action="?/signup" class="w-full max-w-md">
+    <form method="POST" action="?/student" class="w-full max-w-md">
       <div class="mx-auto max-w-md space-y-6">
         <div class="space-y-2 text-center">
           <h1 class="text-3xl font-bold">Sign Up as {$form.role}</h1>
@@ -40,119 +42,125 @@
         <div class="space-y-4">
           <div class="space-y-2">
             <label for="role" class="text-sm font-medium leading-none"
-              >Role</label
+            >Role</label
             >
             <select
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="role"
-              bind:value={$form.role}
-              {...$constraints.role}
+                    name="role"
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="role"
+                    bind:value={$studentForm.role}
+                    {...$constraints.role}
             >
               {#each Object.values(SelectUserRole) as role}
                 <option value={role}>{role}</option>
               {/each}
             </select>
             {#if $errors.role}<p class="text-sm text-red-500">
-                {$errors.role}
-              </p>{/if}
+              {$errors.role}
+            </p>{/if}
           </div>
           <div class="space-y-2">
             <label for="studentId" class="text-sm font-medium leading-none"
-              >Student ID</label
+            >Student ID</label
             >
             <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="studentId"
-              type="text"
-              placeholder="Enter your student ID"
-              bind:value={$studentForm.studentId}
-              {...$studentConstraints.studentId}
+                    name="studentId"
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="studentId"
+                    type="text"
+                    placeholder="Enter your student ID"
+                    bind:value={$studentForm.studentId}
+                    {...$studentConstraints.studentId}
             />
             {#if $studentErrors.studentId}<p class="text-sm text-red-500">
-                {$studentErrors.studentId}
-              </p>{/if}
+              {$studentErrors.studentId}
+            </p>{/if}
           </div>
           <div class="space-y-2">
             <label for="phone" class="text-sm font-medium leading-none"
-              >Phone</label
+            >Phone</label
             >
             <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="phone"
-              type="tel"
-              placeholder="265XXXXXXXXX"
-              bind:value={$studentForm.phone}
-              {...$studentConstraints.phone}
+                    name="phone"
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="phone"
+                    type="tel"
+                    placeholder="265XXXXXXXXX"
+                    bind:value={$studentForm.phone}
+                    {...$studentConstraints.phone}
             />
             {#if $studentErrors.phone}<p class="text-sm text-red-500">
-                {$studentErrors.phone}
-              </p>{/if}
+              {$studentErrors.phone}
+            </p>{/if}
           </div>
           <div class="space-y-2">
             <label for="firstName" class="text-sm font-medium leading-none"
-              >First Name</label
+            >First Name</label
             >
             <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="firstName"
-              type="text"
-              placeholder="John"
-              bind:value={$studentForm.firstName}
-              {...$studentConstraints.firstName}
+                    name="firstName"
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="firstName"
+                    type="text"
+                    placeholder="John"
+                    bind:value={$studentForm.firstName}
+                    {...$studentConstraints.firstName}
             />
             {#if $studentErrors.firstName}<p class="text-sm text-red-500">
-                {$studentErrors.firstName}
-              </p>{/if}
+              {$studentErrors.firstName}
+            </p>{/if}
           </div>
           <div class="space-y-2">
             <label for="lastName" class="text-sm font-medium leading-none"
-              >Last Name</label
+            >Last Name</label
             >
             <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="lastName"
-              type="text"
-              placeholder="Doe"
-              bind:value={$studentForm.lastName}
-              {...$studentConstraints.lastName}
+                    name="lastName"
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    bind:value={$studentForm.lastName}
+                    {...$studentConstraints.lastName}
             />
             {#if $studentErrors.lastName}<p class="text-sm text-red-500">
-                {$studentErrors.lastName}
-              </p>{/if}
+              {$studentErrors.lastName}
+            </p>{/if}
           </div>
           <div class="space-y-2">
             <label for="email" class="text-sm font-medium leading-none"
-              >Email</label
+            >Email</label
             >
             <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="email"
-              type="email"
-              placeholder="john.doe@example.com"
-              bind:value={$studentForm.email}
-              {...$studentConstraints.email}
+                    name="email"
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="email"
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    bind:value={$studentForm.email}
+                    {...$studentConstraints.email}
             />
             {#if $studentErrors.email}<p class="text-sm text-red-500">
-                {$studentErrors.email}
-              </p>{/if}
+              {$studentErrors.email}
+            </p>{/if}
           </div>
 
           <button
-            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
-            type="submit"
+                  class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                  type="submit"
           >
             Sign Up
           </button>
         </div>
         <p class="text-center">
           Have an account? <a href="/auth" class="text-primary hover:underline"
-            >Login</a
-          >
+        >Login</a
+        >
         </p>
       </div>
     </form>
   {:else}
-    <form method="POST" action="?/signup" class="w-full max-w-md">
+    <form method="POST" action="?/staff" class="w-full max-w-md">
       <div class="mx-auto max-w-md space-y-6">
         <div class="space-y-2 text-center">
           <h1 class="text-3xl font-bold">Sign Up as {$form.role}</h1>
@@ -254,7 +262,7 @@
           </button>
         </div>
         <p class="text-center">
-          Have an account? <a href="/auth" class="text-primary hover:underline"
+          Have an account? <a href="/auth/login" class="text-primary hover:underline"
             >Login</a
           >
         </p>
