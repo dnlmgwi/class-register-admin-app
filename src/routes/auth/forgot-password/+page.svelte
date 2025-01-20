@@ -1,126 +1,101 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import Input from "$lib/components/ui/input/input.svelte";
-  import { baseUrl } from "$lib/utils/constants";
   import { toast } from "svelte-sonner";
-  import { invalidateAll } from "$app/navigation";
   import logo from "$lib/assets/images/coat_of_arms_of_malawi.webp";
   import { superForm } from "sveltekit-superforms";
-  import { z } from "zod";
   import { zod } from "sveltekit-superforms/adapters";
-  import {loginUserSchema} from "$lib/domain/validators/User/loginUserValidator";
+  import { forgotPasswordSchema } from "$lib/domain/validators/User/forgotPasswordValidator";
 
   let { data } = $props();
-  const { form, errors, enhance } = superForm(data.form, {
-    validators: zod(loginUserSchema),
-    onError: ({ result }) => {
-      toast.error(result.error.message);
-    }
+  let emailSent = $state(false);
+
+  const {form, errors, enhance, message} = superForm(data.form, {
+      validators: zod(forgotPasswordSchema),
+      onResult: ({result}) => {
+          if (result.type === 'failure') {
+              toast.error(result.data?.message || 'Recovery Failed');
+          }
+          if (result.type === 'success') {
+              emailSent = true;
+          }
+      },
+      onError: ({ result }) => {
+          toast.error(result.error.message);
+      }
   });
+
 </script>
 
 <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 sm:px-6 lg:px-8">
-  <div class="bg-white sm:mx-auto sm:w-full sm:max-w-md rounded-lg shadow-lg p-8 space-y-8">
-    <div class="transform transition-all hover:scale-105">
-      <img
-              alt="logo"
-              src={logo}
-              class="w-24 h-24 mx-auto object-contain"
-              loading="lazy"
-      />
-    </div>
+    <div class="bg-white sm:mx-auto sm:w-full sm:max-w-md rounded-lg shadow-lg p-8 space-y-8">
+        {#if emailSent}
+            <!-- Recovery Email Sent Content -->
+            <div class="space-y-6 text-center">
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
 
-    <div class="space-y-3 text-center">
-      <h1 class="text-3xl font-extrabold text-gray-900">Welcome Back</h1>
-      <p class="text-gray-500">Sign in to your account</p>
-    </div>
+                <h1 class="text-3xl font-extrabold text-gray-900">Recovery Email Sent</h1>
+                <p class="text-gray-500">
+                    We've sent password recovery instructions to<br>
+                    <span class="font-medium text-primary">{$form.email}</span>
+                </p>
 
-    <form
-            method="POST"
-            action="?/login"
-            class="space-y-6"
-    >
-      <div class="space-y-2">
-        <label
-                for="phone"
-                class="block text-sm font-medium text-gray-700"
-        >
-          Phone Number
-        </label>
-        <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                autocomplete="mobile tel"
-                placeholder="265XXXXXXXXX"
-                class="w-full focus:ring-2 focus:ring-primary"
-                bind:value={$form.phone}
-                aria-invalid={$errors.phone ? 'true' : undefined}
-        />
-        {#if $errors.phone}
-          <p class="text-sm text-red-500 mt-1">{$errors.phone}</p>
+                <div class="space-y-4">
+                    <button
+                            onclick={() => emailSent = false}
+                            class="w-full flex justify-center py-3 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                    >
+                        Resend Email
+                    </button>
+                    <a
+                            href="/login"
+                            class="inline-block w-full text-center text-sm font-medium text-primary hover:text-primary/80"
+                    >
+                        Return to Login
+                    </a>
+                </div>
+            </div>
+        {:else}
+            <!-- Original Forgot Password Form -->
+            <div class="transform transition-all hover:scale-105">
+                <!-- <img...> Keep your logo if needed -->
+            </div>
+
+            <div class="space-y-3 text-center">
+                <h1 class="text-3xl font-extrabold text-gray-900">Forgot Password</h1>
+                <p class="text-gray-500">Please Enter Your Email Address</p>
+            </div>
+
+            <form method="POST" class="space-y-6" use:enhance>
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email address
+                    </label>
+                    <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autocomplete="email"
+                            placeholder="email@email.com"
+                            class="w-full focus:ring-2 focus:ring-primary"
+                            bind:value={$form.email}
+                            aria-invalid={$errors.email ? 'true' : undefined}
+                    />
+                    {#if $errors.email}
+                        <p class="text-sm text-red-500 mt-1">{$errors.email}</p>
+                    {/if}
+                </div>
+                <button
+                        type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transform transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Recover Account
+                </button>
+            </form>
         {/if}
-      </div>
-
-      <div class="space-y-2">
-        <label
-                for="password"
-                class="block text-sm font-medium text-gray-700"
-        >
-          Password
-        </label>
-        <Input
-                id="password"
-                name="password"
-                type="password"
-                autocomplete="current-password"
-                class="w-full focus:ring-2 focus:ring-primary"
-                bind:value={$form.password}
-                aria-invalid={$errors.password ? 'true' : undefined}
-        />
-        {#if $errors.password}
-          <p class="text-sm text-red-500 mt-1">{$errors.password}</p>
-        {/if}
-      </div>
-
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <input
-                  id="remember_me"
-                  name="remember_me"
-                  type="checkbox"
-                  class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-          />
-          <label for="remember_me" class="ml-2 block text-sm text-gray-700">
-            Remember me
-          </label>
-        </div>
-
-        <div class="text-sm">
-          <a href="/auth/reset-password" class="font-medium text-primary hover:text-primary/80">
-            Forgot password?
-          </a>
-        </div>
-      </div>
-
-      <button
-              type="submit"
-              class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transform transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Sign in
-      </button>
-
-      <div class="text-center text-sm">
-        <p class="text-gray-600">
-          Don't have an account?{" "}
-          <a
-                  href="/auth/signup"
-                  class="font-medium text-primary hover:text-primary/80 hover:underline"
-          >
-            Create Account
-          </a>
-        </p>
-      </div>
-    </form>
-  </div>
+    </div>
 </div>
