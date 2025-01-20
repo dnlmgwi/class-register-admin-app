@@ -49,25 +49,6 @@
 
   export let data;
 
-  const handleLogout: SubmitFunction = () => {
-    return async ({ result }) => {
-      if (result.type === 'success') {
-        if (browser) {
-          window.history.pushState(null, '', '/auth');
-          window.history.replaceState(null, '', '/auth');
-          await goto('/auth', { replaceState: true });
-        }
-      }
-    };
-  };
-
-  function handleLogoutClick(event: MouseEvent) {
-    event.preventDefault();
-    handleLogout().catch((error) => {
-      alert(error);
-    });
-  }
-
   let isSidebarOpen = false;
 </script>
 
@@ -240,8 +221,7 @@
           <DropdownMenu.Item>
             <form
                     method="POST"
-                    action="?/logout"
-                    use:enhance={handleLogout}
+                    action="/dashboard?/logout"
             >
               <button
                       type="submit"
