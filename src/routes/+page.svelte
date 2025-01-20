@@ -12,7 +12,7 @@
     <nav class="ml-auto gap-4 sm:gap-6 flex items-center justify-center">
       <a
         class="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 text-gray-50 hover:text-gray-50 px-4 py-2 text-sm font-medium shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 bg-gray-950 hover:bg-gray-800 focus-visible:ring-gray-300"
-        href="/auth"
+        href="/auth/login"
       >
         Login
       </a>
