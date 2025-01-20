@@ -25,7 +25,7 @@ function getErrorMessage(error: unknown): string {
 
 async function isAuthorized(user: User | null): Promise<Boolean> {
   if (!user) {
-    redirect(303, "/auth");
+    redirect(303, "/auth/login");
   }
 
   switch (user.role) {
