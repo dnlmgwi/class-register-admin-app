@@ -58,21 +58,21 @@
                     <div class="space-y-4">
                         <!-- Phone input -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
                                 Phone Number
                             </label>
                             <input
-                                    id="email"
-                                    name="email"
+                                    id="phone"
+                                    name="phone"
                                     type="tel"
                                     required
                                     class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-white"
                                     placeholder="265XXXXXXXXX"
-                                    bind:value={$form.email}
-                                    aria-invalid={$errors.email ? 'true' : undefined}
+                                    bind:value={$form.phone}
+                                    aria-invalid={$errors.phone ? 'true' : undefined}
                             />
-                            {#if $errors.email}
-                                <p class="text-sm text-red-500 mt-1">{$errors.email}</p>
+                            {#if $errors.phone}
+                                <p class="text-sm text-red-500 mt-1">{$errors.phone}</p>
                             {/if}
                         </div>
 
