@@ -16,7 +16,7 @@
     import {enhance} from '$app/forms';
     import {createDeviceSchema} from "$lib/domain/validators/Device/createDeviceValidator.js";
     import type {CreateDeviceDTO} from "$lib/domain/valueObjects/CreateDeviceDTO.js";
-    import type {PageProps} from "$lib/$types";
+    import type { PageProps } from './$types';
 
 
     let { data }: PageProps = $props();
@@ -33,7 +33,7 @@
     const url = $page.url;
     let total = data.meta.total;
     let currentPage = 1;
-    let token = $state("");
+    let token = $state<string>("");
 
     interface DialogState {
         action: string;
