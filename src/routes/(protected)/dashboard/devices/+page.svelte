@@ -16,9 +16,10 @@
     import {enhance} from '$app/forms';
     import {createDeviceSchema} from "$lib/domain/validators/Device/createDeviceValidator.js";
     import type {CreateDeviceDTO} from "$lib/domain/valueObjects/CreateDeviceDTO.js";
+    import type {PageProps} from "$lib/$types";
 
-    export let data;
 
+    let { data }: PageProps = $props();
     const createDialogOpen = writable(false);
     const tokenDialogOpen = writable(false);
 
@@ -32,7 +33,7 @@
     const url = $page.url;
     let total = data.meta.total;
     let currentPage = 1;
-    let token = "";
+    let token = $state("");
 
     interface DialogState {
         action: string;
@@ -99,10 +100,9 @@
             });
     };
 
-    const handleDone = () => {
+    const handleDone = async () => {
         copyToClipboard(token);
-        invalidateCache();
-        invalidateAll();
+        await invalidateAll();
         tokenDialogOpen.set(false);
     };
 </script>
@@ -153,9 +153,9 @@
                     return async ({ result }) => {
                         if (result.type === 'success') {
                             createDialogOpen.set(false);
+                            token = result?.data.token;
                             toast.success('Device created successfully');
-                            await goto($page.url.pathname, { invalidateAll: true,
-    keepFocus: true});
+                            tokenDialogOpen.set(true);
                         } else if (result.type === 'failure') {
                             toast.error(result.data.error || 'Failed to create device');
                         }
