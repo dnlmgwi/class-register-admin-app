@@ -18,7 +18,7 @@
     validators: zod(createUserSchema),
   });
 
-  let isStudent = $derived($form.role === SelectUserRole.Student);
+  let isStudent = $derived($form.role === "student");
 
   const {
     form: studentForm,
@@ -137,11 +137,11 @@
                     id="email"
                     type="email"
                     placeholder="john.doe@example.com"
-                    bind:value={$studentForm.email}
-                    {...$studentConstraints.email}
+                    bind:value={$studentForm.phone}
+                    {...$studentConstraints.phone}
             />
-            {#if $studentErrors.email}<p class="text-sm text-red-500">
-              {$studentErrors.email}
+            {#if $studentErrors.phone}<p class="text-sm text-red-500">
+              {$studentErrors.phone}
             </p>{/if}
           </div>
 
@@ -187,20 +187,20 @@
               </p>{/if}
           </div>
           <div class="space-y-2">
-            <label for="email" class="text-sm font-medium leading-none"
+            <label for="phone" class="text-sm font-medium leading-none"
               >Phone</label
             >
             <input
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              id="email"
+              id="phone"
               type="tel"
-              name="email"
+              name="phone"
               placeholder="265880000000"
-              bind:value={$form.email}
-              {...$constraints.email}
+              bind:value={$form.phone}
+              {...$constraints.phone}
             />
-            {#if $errors.email}<p class="text-sm text-red-500">
-                {$errors.email}
+            {#if $errors.phone}<p class="text-sm text-red-500">
+                {$errors.phone}
               </p>{/if}
           </div>
           <div class="space-y-2">
