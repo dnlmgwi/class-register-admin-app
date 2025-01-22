@@ -74,11 +74,9 @@
     // Handler for dialog closure after action
     const handleActionComplete = async (result: any, deviceId: string, index: number) => {
         if (result.type === 'success') {
-            dialogStore.close(deviceId);
             toast.success(result.data || 'Operation completed successfully');
-
-            // Try multiple reload strategies
-            window.location.reload();
+            dialogStore.close(deviceId);
+            await invalidateAll();
         } else if (result.type === 'failure') {
             toast.error(result.data?.error || 'Operation failed');
         }
@@ -102,8 +100,8 @@
 
     const handleDone = async () => {
         copyToClipboard(token);
-        await invalidateAll();
         tokenDialogOpen.set(false);
+        await invalidateAll();
     };
 </script>
 
