@@ -82,6 +82,9 @@ export const actions: Actions = {
 
             // Return success response
             const result = await response.json();
+
+            console.log(result.data);
+
             return {
                 form,
                 success: true,
