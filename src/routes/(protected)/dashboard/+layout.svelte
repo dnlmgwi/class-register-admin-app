@@ -24,6 +24,7 @@
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import {browser} from "$app/environment";
   import type {SubmitFunction} from "@sveltejs/kit";
+  import {Toaster} from "$lib/components/ui/sonner";
   export const currentPath = derived(page, ($page) => $page.url.pathname);
 
   export const pageTitle = derived(currentPath, ($currentPath) => {
@@ -51,7 +52,7 @@
 
   let isSidebarOpen = false;
 </script>
-
+<Toaster />
 <Resizable.PaneGroup direction="horizontal" class="rounded-lg border w-full ">
   <Resizable.Pane defaultSize={15}>
     <div class="flex h-[60px] items-center border-b px-6">
