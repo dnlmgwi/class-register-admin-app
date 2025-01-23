@@ -4,6 +4,7 @@
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { baseUrl } from "$lib/utils/constants.js";
+  import {Toaster} from "$lib/components/ui/sonner";
 
   let showInactiveDialog = false;
   let showTokenExpiredDialog = false;
@@ -48,6 +49,7 @@
   export let data;
 </script>
 
+<Toaster />
 {#if data.jwt}
   <AlertDialog.Root bind:open={$inactiveSession}>
     <AlertDialog.Content>
