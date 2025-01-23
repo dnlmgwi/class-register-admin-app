@@ -41,6 +41,7 @@ export const actions: Actions = {
         const result = await response.json();
 
         if (response.ok) {
+
             locals.jwt = result.data;
 
             cookies.set("jwt", result.data, {
@@ -50,11 +51,10 @@ export const actions: Actions = {
                 path: "/",
             });
 
-            return {success: true};
+            throw redirect(303, '/dashboard');
         } else {
-            return fail(response.status, {
+            return fail(result.status, {
                 form,
-                success: false,
                 message: result.error || 'Invalid credentials'
             });
         }
