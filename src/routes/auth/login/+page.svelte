@@ -3,34 +3,41 @@
     import {zod} from "sveltekit-superforms/adapters";
     import {toast} from "svelte-sonner";
     import {loginUserSchema} from "$lib/domain/validators/User/loginUserValidator";
-    import {goto} from "$app/navigation";
+    import {goto, invalidateAll} from "$app/navigation";
     import {EyeIcon, EyeOffIcon} from "lucide-svelte";
     import {Button} from "$lib/components/ui/button";
-    import logo from "$lib/assets/pexels-pixabay-289737.jpg";
 
     let {data} = $props();
 
-    // Password visibility state
     let showPassword = $state(false);
 
-    // Form handling
-    const {form, errors, enhance, message} = superForm(data.form, {
-        validators: zod(loginUserSchema),
-        onResult: ({result}) => {
-            if (result.type === 'failure') {
-                toast.error(result.data?.message || 'Login failed');
+    const {form, errors, enhance} = superForm(data.form, {
+            validators: zod(loginUserSchema),
+            onError: ({result}) => {
+                toast.error(result.error.message || 'Login failed');
+            },
+            onResult: ({result}) => {
+                if (result.type === 'failure') {
+                    toast.error(result.data.message || 'Login failed');
+                }
+                if (result.type === 'success') {
+                    toast.success("Login successful");
+                }
             }
-            if (result.type === 'success') {
-                goto('/dashboard');
-            }
-        },
-    });
+        }
+    );
 </script>
 
-<div class="min-h-screen w-full bg-gray-100 h-full flex items-center justify-center p-4">
-    <div class="bg-white overflow-hidden w-full h-lvh flex flex-col lg:flex-row p-12 rounded-3xl">
+<div
+        class="min-h-screen w-full bg-gray-100 h-full flex items-center justify-center p-4"
+>
+    <div
+            class="bg-white overflow-hidden w-full h-lvh flex flex-col lg:flex-row p-12 rounded-3xl"
+    >
         <!-- Left side - Illustration -->
-        <div class="lg:w-1/2 hidden lg:flex p-12 lg:p-16 flex-col justify-center items-center relative rounded-3xl">
+        <div
+                class="lg:w-1/2 hidden lg:flex p-12 lg:p-16 flex-col justify-center items-center relative rounded-3xl"
+        >
             <!-- Dark Overlay -->
             <div class="w-full absolute inset-0 bg-black/20 rounded-3xl"></div>
 
@@ -45,7 +52,9 @@
         </div>
 
         <!-- Right side - Login form -->
-        <div class="h-screen w-full lg:w-1/2 p-6 lg:p-16 flex flex-col justify-center">
+        <div
+                class="h-screen w-full lg:w-1/2 p-6 lg:p-16 flex flex-col justify-center"
+        >
             <div class="w-full max-w-md mx-auto">
                 <!-- Header -->
                 <div class="text-center mb-8">
@@ -54,11 +63,15 @@
                 </div>
 
                 <!-- Form -->
-                <form method="POST" action="?/login" class="space-y-6" use:enhance>
+                <form method="POST" action="?/login" class="space-y-6" use:enhance
+                >
                     <div class="space-y-4">
                         <!-- Phone input -->
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label
+                                    for="phone"
+                                    class="block text-sm font-medium text-gray-700 mb-1"
+                            >
                                 Phone Number
                             </label>
                             <input
@@ -69,7 +82,7 @@
                                     class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-white"
                                     placeholder="265XXXXXXXXX"
                                     bind:value={$form.phone}
-                                    aria-invalid={$errors.phone ? 'true' : undefined}
+                                    aria-invalid={$errors.phone ? "true" : undefined}
                             />
                             {#if $errors.phone}
                                 <p class="text-sm text-red-500 mt-1">{$errors.phone}</p>
@@ -78,7 +91,10 @@
 
                         <!-- Password input -->
                         <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label
+                                    for="password"
+                                    class="block text-sm font-medium text-gray-700 mb-1"
+                            >
                                 Password
                             </label>
                             <div class="relative">
@@ -89,11 +105,11 @@
                                         required
                                         class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-white"
                                         bind:value={$form.password}
-                                        aria-invalid={$errors.password ? 'true' : undefined}
+                                        aria-invalid={$errors.password ? "true" : undefined}
                                 />
                                 <button
                                         type="button"
-                                        onclick={() => showPassword = !showPassword}
+                                        onclick={() => (showPassword = !showPassword)}
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
                                         aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
@@ -115,7 +131,10 @@
                         <div class="flex items-center">
                             <!-- Empty for now -->
                         </div>
-                        <a href="/auth/forgot-password" class="text-sm text-gray-600 hover:text-gray-900">
+                        <a
+                                href="/auth/forgot-password"
+                                class="text-sm text-gray-600 hover:text-gray-900"
+                        >
                             Forgot password?
                         </a>
                     </div>
@@ -133,7 +152,10 @@
                     <!-- Sign up link -->
                     <div class="text-center text-sm text-gray-600">
                         Don't have an account?{" "}
-                        <a href="/auth/signup" class="font-medium text-primary hover:text-primary/80">
+                        <a
+                                href="/auth/signup"
+                                class="font-medium text-primary hover:text-primary/80"
+                        >
                             Sign up
                         </a>
                     </div>
