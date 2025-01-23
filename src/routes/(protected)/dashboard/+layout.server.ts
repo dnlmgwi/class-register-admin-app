@@ -1,5 +1,5 @@
 import {redirect, type Actions, error} from "@sveltejs/kit";
-import type { PageServerLoad } from "../../auth/$types";
+import type { PageServerLoad } from "./$types";
 import {baseUrl} from "$lib/utils/constants";
 
 export const load: PageServerLoad = async ({ locals, cookies }) => {
