@@ -8,17 +8,20 @@ import { fail, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { serverCacheFetch } from "$lib/stores/serverCache";
 import { redirect, type Actions, error } from "@sveltejs/kit";
-import { deleteDeviceSchema } from "$lib/domain/validators/Device/deleteDeviceValidator";
+import { deleteDeviceSchema as deviceIdSchema } from "$lib/domain/validators/Device/deleteDeviceValidator";
 import type { AttendanceRegisterDTO } from "$lib/domain/valueObjects/AttendanceRegisterDTO";
 import { createModuleSchema } from "$lib/domain/validators/Module/createModuleValidator";
 import { isAuthorized } from "$lib/utils/utilFunc";
+import { editDeviceSchema } from "$lib/domain/validators/Device/editDeviceValidator";
 
 export const load: PageServerLoad = async ({ locals, url, fetch }) => {
   let page = url.searchParams.get("page");
   let limit = url.searchParams.get("limit");
   const { pathname } = url;
 
+  // Initialize the forms with their respective schemas
   const form = await superValidate(zod(createDeviceSchema));
+  const deviceForm = await superValidate(zod(editDeviceSchema));
 
   if (!locals.jwt) {
     throw error(401, "Not authenticated");
@@ -48,6 +51,7 @@ export const load: PageServerLoad = async ({ locals, url, fetch }) => {
     devices,
     meta,
     unauthorized: !isAdmin,
+    deviceForm,
   };
 };
 
@@ -89,8 +93,6 @@ export const actions: Actions = {
       // Return success response
       const result = await response.json();
 
-      console.log(result.data);
-
       return {
         form,
         success: true,
@@ -107,7 +109,7 @@ export const actions: Actions = {
 
   // Delete Device Action
   delete: async ({ request, locals, fetch }) => {
-    const form = await superValidate(request, zod(deleteDeviceSchema));
+    const form = await superValidate(request, zod(deviceIdSchema));
 
     // Validate the form
     if (!form.valid) {
@@ -148,7 +150,7 @@ export const actions: Actions = {
 
   // Enable Device Action
   enable: async ({ request, locals, fetch }) => {
-    const form = await superValidate(request, zod(deleteDeviceSchema));
+    const form = await superValidate(request, zod(deviceIdSchema));
 
     // Validate the form
     if (!form.valid) {
@@ -187,9 +189,47 @@ export const actions: Actions = {
     }
   },
 
+  // Update Device Action
+  edit: async ({ request, locals, fetch }) => {
+    const form = await superValidate(request, zod(editDeviceSchema));
+
+    // Validate the form
+    if (!form.valid) {
+      return fail(400, {
+        deviceForm: form,
+        error: form.errors.id || "Invalid form data",
+      });
+    }
+
+    // Send a PUT request to enable the device
+    const response = await fetch(`${baseUrl}/api/v1/device`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${locals.jwt}`,
+      },
+      body: JSON.stringify({ ...form.data }),
+    });
+
+    // Handle API errors
+    const result = await response.json();
+
+    if (!response.ok) {
+      return fail(response.status, {
+        error: result.error,
+      });
+    }
+
+    return {
+      deviceForm: form,
+      success: true,
+      token: result.data, // Return the token for the frontend
+    };
+  },
+
   // Disable Device Action
   disable: async ({ request, locals, fetch }) => {
-    const form = await superValidate(request, zod(deleteDeviceSchema));
+    const form = await superValidate(request, zod(deviceIdSchema));
 
     // Validate the form
     if (!form.valid) {
@@ -223,6 +263,7 @@ export const actions: Actions = {
     } catch (err) {
       // Handle unexpected errors
       return fail(500, {
+        form,
         error: "Failed to disable device",
       });
     }
