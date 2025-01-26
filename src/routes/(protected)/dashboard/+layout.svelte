@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import { enhance } from '$app/forms';
+  import { enhance } from "$app/forms";
   import { derived } from "svelte/store";
   import { baseUrl } from "$lib/utils/constants";
   import * as Resizable from "$lib/components/ui/resizable";
@@ -22,9 +22,9 @@
   import logo from "$lib/assets/images/coat_of_arms_of_malawi.webp";
   import { Button } from "$lib/components/ui/button/index.js";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-  import {browser} from "$app/environment";
-  import type {SubmitFunction} from "@sveltejs/kit";
-  import {Toaster} from "$lib/components/ui/sonner";
+  import { browser } from "$app/environment";
+  import type { SubmitFunction } from "@sveltejs/kit";
+  import { Toaster } from "$lib/components/ui/sonner";
   export const currentPath = derived(page, ($page) => $page.url.pathname);
 
   export const pageTitle = derived(currentPath, ($currentPath) => {
@@ -52,6 +52,7 @@
 
   let isSidebarOpen = false;
 </script>
+
 <Toaster />
 <Resizable.PaneGroup direction="horizontal" class="rounded-lg border w-full ">
   <Resizable.Pane defaultSize={15}>
@@ -130,7 +131,7 @@
           Modules
         </a>
 
-        <p class="py-2 text-sm font-medium text-gray-600">Accounts</p>
+        <p class="py-2 text-sm font-medium text-gray-600">Manage Accounts</p>
         <a
           class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900"
           href="/dashboard/users/active"
@@ -220,13 +221,10 @@
           </DropdownMenu.Group>
           <DropdownMenu.Separator />
           <DropdownMenu.Item>
-            <form
-                    method="POST"
-                    action="/dashboard?/logout"
-            >
+            <form method="POST" action="/dashboard?/logout">
               <button
-                      type="submit"
-                      class="flex w-full items-center gap-3 rounded-lg transition-all hover:text-gray-900"
+                type="submit"
+                class="flex w-full items-center gap-3 rounded-lg transition-all hover:text-gray-900"
               >
                 <LogOut class="mr-2 h-4 w-4" />
                 <span>Log out</span>
