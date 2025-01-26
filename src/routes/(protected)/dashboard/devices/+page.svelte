@@ -13,10 +13,10 @@
   import { zod } from "sveltekit-superforms/adapters";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { format } from "timeago.js";
-  import { enhance } from "$app/forms";
   import { createDeviceSchema } from "$lib/domain/validators/Device/createDeviceValidator.js";
   import type { CreateDeviceDTO } from "$lib/domain/valueObjects/CreateDeviceDTO.js";
   import type { PageProps } from "./$types";
+  import { enhance } from "$app/forms";
   import { editDeviceSchema } from "$lib/domain/validators/Device/editDeviceValidator";
 
   let { data }: PageProps = $props();
@@ -24,10 +24,23 @@
   const editDialogOpen = writable(false);
   const tokenDialogOpen = writable(false);
 
-  const { form, errors, constraints, validateForm } = superForm(data.form, {
+  const {
+    form,
+    errors,
+    constraints,
+    validateForm,
+    enhance: createDeviceEnhance,
+  } = superForm(data.form, {
     validators: zod(createDeviceSchema),
-    onResult: (data) => {
-      tokenDialogOpen.set(true);
+    onResult: ({ result }) => {
+      if (result.type === "success") {
+        createDialogOpen.set(false);
+        token = result.data?.token as string;
+        toast.success("Device created successfully");
+        tokenDialogOpen.set(true);
+      } else if (result.type === "failure") {
+        toast.error(result.data?.error || "Failed to create device");
+      }
     },
   });
 
@@ -198,22 +211,7 @@
           students will sign in. Name must be at least 5 characters.
         </Dialog.Description>
       </Dialog.Header>
-      <form
-        method="POST"
-        action="?/create"
-        use:enhance={() => {
-          return async ({ result }) => {
-            if (result.type === "success") {
-              createDialogOpen.set(false);
-              token = result.data?.token as string;
-              toast.success("Device created successfully");
-              tokenDialogOpen.set(true);
-            } else if (result.type === "failure") {
-              toast.error(result.data.error || "Failed to create device");
-            }
-          };
-        }}
-      >
+      <form method="POST" action="?/create" use:createDeviceEnhance>
         <div class="grid gap-4 py-4">
           <div class="grid grid-cols-4 items-center gap-4">
             <Label for="name" class="text-right">Name</Label>
